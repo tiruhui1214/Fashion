@@ -1,0 +1,21 @@
+FORME 网站第一次运行（Windows / XAMPP）
+
+1. 安装 XAMPP（PHP 8.2）和 VS Code。
+2. 将整个 Fashion 文件夹放入 C:\xampp\htdocs\Fashion。
+3. 在 XAMPP Control Panel 启动 Apache 和 MySQL。
+4. 在浏览器输入 http://localhost/Fashion/setup.php 。
+5. 创建你自己的管理员账户。
+6. 打开 http://localhost/Fashion/ ，登录后进入 Account → Manage store。
+
+如果数据库端口或密码不同，先复制 config.example.php 为 config.local.php，修改副本。
+不要双击 PHP 文件，也不要用 VS Code Live Server 运行 PHP。
+
+详细中文教程：docs/WINDOWS-SETUP.md
+代码学习与模块分工：docs/CODE-WALKTHROUGH.md
+测试记录与待自行验证项目：docs/TESTING.md
+
+这是可运行的学习起始版本。商品图片是占位插画，请从后台换成你们有权使用的照片。
+示例付款不会收取真实费用。每个组员仍需理解、修改、测试和讲解自己的模块。
+
+搬迁已经修改过的项目时，必须同时复制 uploads，并导出/导入 MariaDB 数据库。
+详细步骤在中文教程 B 部分。仅复制源码不会带走数据库里的商品、用户和订单。
