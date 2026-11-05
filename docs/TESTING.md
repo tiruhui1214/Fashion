@@ -162,3 +162,9 @@ Updated screenshots include home desktop/mobile, product, login, homepage-conten
 - Long accepted copy remains inside the banner at 320, 390 and 1440px using a content-driven minimum height. No JavaScript errors were observed in the main run.
 
 New screenshots: category-desktop.png, category-mobile.png and category-banner-admin.png. Home and homepage-content screenshots have been refreshed. No database schema migration is needed. The hero now uses manual browsing rather than autoplay so only one action is displayed over each poster.
+
+## Edge-to-edge first-screen hero — 6 November 2026
+
+100 Chromium geometry and visibility assertions passed across 11 viewport sizes: 320×568, 390×844, 414×896, 768×1024, 1024×768, 1366×768, 1440×900, 1920×1080, 2560×1440, 844×390 and 390×390. The hero and its cover image start at (0,0), span the document width and match viewport height; all four corners measure 0px. The navigation remains fixed above the image. Both sample slides retain visible copy and exactly one shopping action below the navigation, with no horizontal overflow or JavaScript errors.
+
+`hero-fullscreen.png` and `hero-fullscreen-mobile.png` capture only the first screen. The full-page home previews are also updated. Only presentation styles changed; no database migration or business-function changes are included.

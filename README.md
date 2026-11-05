@@ -18,7 +18,7 @@ Read **[the illustrated-by-steps Chinese Windows guide](docs/WINDOWS-SETUP.md)**
 ## Implemented areas
 
 - Customer registration, sign in/out, profile, saved-address CRUD; administrator customer CRUD with order-history protection.
-- Hero/campaign banner CRUD, upload preview, text colour/alignment/link/order/visibility settings, optional mobile banner images. The square main hero shows one shopping CTA and uses manual swipe/arrow-key browsing.
+- Hero/campaign banner CRUD, upload preview, text colour/alignment/link/order/visibility settings, optional mobile banner images. The square main hero fills the complete first viewport, edge to edge, beneath a fixed overlay navigation. It shows one shopping CTA and uses manual swipe/arrow-key browsing.
 - Display-only department/subcategory landscape headers, with independent desktop/mobile uploads, heading and colour settings, department inheritance and reset support. This editor belongs to content management; it is not a separate assignment module.
 - Women/Men/Kids category CRUD, product CRUD, homepage featured edit, catalogue search/filter/sort.
 - Colour/size variant CRUD, per-variant stock and image, extra colour-specific gallery photos, low-stock overview.
