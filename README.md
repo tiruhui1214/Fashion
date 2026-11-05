@@ -65,7 +65,7 @@ No real payment, email delivery/password recovery, refund processing, tax calcul
 
 ## Visual update
 
-The editorial theme uses porcelain white, cool stone grey, ink black and muted plum accents, with 16px body text, larger product information, an expanded brand footer and a charcoal admin sidebar. Read [the safe update guide](docs/UPDATE-DESIGN.md) before applying it to an existing XAMPP installation. No database migration is needed.
+The editorial theme uses porcelain white, cool stone grey, ink black and muted plum accents, with 16px body text, larger product information, an expanded brand footer and a charcoal admin sidebar. Collection imagery uses 32px rounded corners and a soft fade with inset capsule links; product photos use 18–24px corners, primary buttons are pill-shaped and forms use 12px corners. Fine-pointer card drift, staggered reveals, image fades and clipped button ripples respect reduced motion and never delay navigation or submission. Read [the safe update guide](docs/UPDATE-DESIGN.md) before applying it to an existing XAMPP installation. No database migration is needed.
 
 ## Backup
 

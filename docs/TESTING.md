@@ -131,3 +131,18 @@ The repeated-checkout and cancellation database assertions verified exact row co
 - PHP and JavaScript syntax checks pass.
 
 Updated screenshots include home desktop/mobile, product, login, homepage-content admin and dashboard. The imagery is still illustrative placeholder artwork. Actual Windows/XAMPP use and integration with your locally modified source require checking on your machine.
+
+## Rounded cards and motion validation — 6 November 2026
+
+68 additional Chromium assertions passed, plus JavaScript / changed-PHP syntax checks.
+
+- Computed styles verify 32px collection corners, 999px capsule buttons, 24px admin panels and 12px form controls.
+- Collection captions stay within their cards and pages have no horizontal overflow at 320, 390, 768, 1024 and 1440px widths. Admin screens were checked at 390, 768 and 1440px.
+- Fine-pointer hover lifts the collection card, tracks a bounded image drift and resets on leave. Button ripples are clipped to the button and cleaned up after completion.
+- Colour switching still selects the proper image and available variant while adding a short fade.
+- Staggered reveals finish fully visible. Switching to reduced motion cancels decorative animation without hiding content or leaving ripple nodes.
+- Touch navigation, touch colour selection, keyboard collection navigation and JavaScript-disabled collection links work.
+- A final real sign-in and bag-add/remove flow, including keyboard submission and the checkout link, confirms motion does not intercept or delay application actions.
+- Live admin banner preview continues to work. No JavaScript errors were observed in the tested flows.
+
+`collection-rounded.png` shows the new three-card composition. Other preview screenshots have been refreshed. Sample images remain placeholder illustrations; no database schema changes are required.
