@@ -9,12 +9,47 @@ menu?.addEventListener('click',()=>{const open=nav.classList.toggle('open');menu
 document.querySelector('[data-dismiss]')?.addEventListener('click',e=>e.target.closest('.notice').remove());
 document.querySelectorAll('form[data-confirm]').forEach(form=>form.addEventListener('submit',e=>{if(!window.confirm(form.dataset.confirm))e.preventDefault();}));
 document.querySelectorAll('[data-card-image]').forEach(button=>button.addEventListener('click',()=>{const card=button.closest('.product-card');softImageSwap(card.querySelector('.product-photo img'),button.dataset.cardImage);card.querySelectorAll('.swatch').forEach(b=>{b.classList.remove('selected');b.setAttribute('aria-pressed','false');});button.classList.add('selected');button.setAttribute('aria-pressed','true');}));
-const slides=[...document.querySelectorAll('.hero-slide')];
-if(slides.length>1){let index=0,paused=matchMedia('(prefers-reduced-motion: reduce)').matches,timer;const pauseButton=document.querySelector('[data-hero-pause]');
- const paint=()=>{slides.forEach((slide,i)=>{slide.classList.toggle('active',i===index);slide.setAttribute('aria-hidden',String(i!==index));slide.inert=i!==index;});const number=document.querySelector('[data-hero-number]');if(number)number.textContent=String(index+1).padStart(2,'0');};
- const move=step=>{index=(index+step+slides.length)%slides.length;paint();};
- const schedule=()=>{clearInterval(timer);if(!paused&&!document.hidden)timer=setInterval(()=>move(1),6500);pauseButton.textContent=paused?'Play':'II';pauseButton.setAttribute('aria-label',paused?'Play slideshow':'Pause slideshow');};
- document.querySelector('[data-hero-prev]')?.addEventListener('click',()=>{move(-1);schedule();});document.querySelector('[data-hero-next]')?.addEventListener('click',()=>{move(1);schedule();});pauseButton?.addEventListener('click',()=>{paused=!paused;schedule();});document.addEventListener('visibilitychange',schedule);document.querySelector('.hero')?.addEventListener('focusin',()=>{paused=true;schedule();});paint();schedule();}
+// Manual browsing keeps one shopping CTA and avoids an extra autoplay/pause control.
+const slides = [...document.querySelectorAll('.hero-slide')];
+const hero = document.querySelector('.hero');
+if (hero && slides.length > 1) {
+  let index = 0;
+  let pointerStart = null;
+  const paint = (announce = false) => {
+    slides.forEach((slide, i) => {
+      slide.classList.toggle('active', i === index);
+      slide.setAttribute('aria-hidden', String(i !== index));
+      slide.inert = i !== index;
+    });
+    const number = hero.querySelector('[data-hero-number]');
+    if (number) number.textContent = String(index + 1).padStart(2, '0');
+    const status = hero.querySelector('[data-hero-status]');
+    if (status && announce) status.textContent = `Collection ${index + 1} of ${slides.length}`;
+  };
+  const move = step => { index = (index + step + slides.length) % slides.length; paint(true); };
+  hero.addEventListener('keydown', event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+    event.preventDefault();
+    // Keep focus in the carousel when a previously focused slide becomes inert.
+    hero.focus({ preventScroll: true });
+    move(event.key === 'ArrowRight' ? 1 : -1);
+  });
+  hero.addEventListener('pointerdown', event => {
+    if (event.button !== 0 || event.target.closest('a,button')) return;
+    pointerStart = { x: event.clientX, y: event.clientY };
+  }, { passive: true });
+  hero.addEventListener('pointerup', event => {
+    if (!pointerStart) return;
+    const dx = event.clientX - pointerStart.x;
+    const dy = event.clientY - pointerStart.y;
+    pointerStart = null;
+    if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.2) move(dx < 0 ? 1 : -1);
+  }, { passive: true });
+  hero.addEventListener('pointercancel', () => { pointerStart = null; });
+  hero.addEventListener('pointerleave', () => { pointerStart = null; });
+  hero.addEventListener('dragstart', event => { if (!event.target.closest('a')) event.preventDefault(); });
+  paint();
+}
 const product=document.querySelector('[data-product]');
 if(product){const select=product.querySelector('[data-variant-select]'),buttons=[...product.querySelectorAll('[data-product-color]')],quantity=product.querySelector('[name=quantity]'),add=product.querySelector('[data-add-button]'),note=product.querySelector('[data-stock-note]');
  const stock=()=>{const option=select?.selectedOptions[0],available=Number(option?.dataset.stock||0);if(quantity)quantity.max=String(Math.min(99,available||1));if(add)add.disabled=!available;if(note)note.textContent=available?`${available} available in this size`:'This colour / size is currently sold out.';};
@@ -66,7 +101,7 @@ if ('IntersectionObserver' in window) {
       reveal.unobserve(entry.target);
     });
   }, { threshold: .1 });
-  document.querySelectorAll('.section-heading, .brand-note, .department-card, .product-card').forEach(element => reveal.observe(element));
+  document.querySelectorAll('.section-heading, .department-card, .product-card').forEach(element => reveal.observe(element));
 }
 
 // A small image drift follows the pointer only on desktop collection cards.

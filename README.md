@@ -18,7 +18,8 @@ Read **[the illustrated-by-steps Chinese Windows guide](docs/WINDOWS-SETUP.md)**
 ## Implemented areas
 
 - Customer registration, sign in/out, profile, saved-address CRUD; administrator customer CRUD with order-history protection.
-- Hero/campaign banner CRUD, upload preview, text colour/alignment/link/order/visibility settings, optional mobile banner images.
+- Hero/campaign banner CRUD, upload preview, text colour/alignment/link/order/visibility settings, optional mobile banner images. The square main hero shows one shopping CTA and uses manual swipe/arrow-key browsing.
+- Display-only department/subcategory landscape headers, with independent desktop/mobile uploads, heading and colour settings, department inheritance and reset support. This editor belongs to content management; it is not a separate assignment module.
 - Women/Men/Kids category CRUD, product CRUD, homepage featured edit, catalogue search/filter/sort.
 - Colour/size variant CRUD, per-variant stock and image, extra colour-specific gallery photos, low-stock overview.
 - Persistent signed-in shopping bag CRUD and wishlist toggle.
@@ -40,6 +41,8 @@ Fashion/
     admin-actions.php       Administrator POST operations
     home.php                Homepage
     catalog.php             Catalogue and product detail
+    catalog-banners.php     Catalogue-banner defaults and inheritance
+    admin-catalog-banners.php  Display-only banner editor
     shop.php                Wishlist, bag, checkout, orders
     account.php             Auth, account, information pages
     admin.php               Dashboard and admin forms
@@ -65,7 +68,7 @@ No real payment, email delivery/password recovery, refund processing, tax calcul
 
 ## Visual update
 
-The editorial theme uses porcelain white, cool stone grey, ink black and muted plum accents, with 16px body text, larger product information, an expanded brand footer and a charcoal admin sidebar. Collection imagery uses 32px rounded corners and a soft fade with inset capsule links; product photos use 18–24px corners, primary buttons are pill-shaped and forms use 12px corners. Fine-pointer card drift, staggered reveals, image fades and clipped button ripples respect reduced motion and never delay navigation or submission. Read [the safe update guide](docs/UPDATE-DESIGN.md) before applying it to an existing XAMPP installation. No database migration is needed.
+The editorial theme uses porcelain white, cool stone grey, ink black and muted plum accents, with 16px body text, larger product information, an expanded brand footer and a charcoal admin sidebar. Large hero and campaign posters have square corners; the campaign now occupies the former text-only brand section after the department cards. Catalogue pages use a separate non-clickable landscape header. Collection-card imagery uses 32px rounded corners and a soft fade with inset capsule links; product photos use 18–24px corners, primary buttons are pill-shaped and forms use 12px corners. Fine-pointer card drift, staggered reveals, image fades and clipped button ripples respect reduced motion and never delay navigation or submission. Read [the safe update guide](docs/UPDATE-DESIGN.md) before applying it to an existing XAMPP installation. No database migration is needed.
 
 ## Backup
 

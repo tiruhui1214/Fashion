@@ -146,3 +146,19 @@ Updated screenshots include home desktop/mobile, product, login, homepage-conten
 - Live admin banner preview continues to work. No JavaScript errors were observed in the tested flows.
 
 `collection-rounded.png` shows the new three-card composition. Other preview screenshots have been refreshed. Sample images remain placeholder illustrations; no database schema changes are required.
+
+## Square posters and display-only catalogue banners — 6 November 2026
+
+68 additional Chromium assertions passed, plus PHP/JavaScript syntax checks.
+
+- Hero and campaign posters have square corners. The hero has one visible shopping CTA and no extra carousel buttons. Keyboard arrows and horizontal pointer gestures change the active slide while vertical gestures do not.
+- The former text-only brand section is absent; enabled campaign posters render immediately after departments and before new arrivals.
+- Women, Men and Kids receive distinct default landscape headers. Catalogue headers contain no links, buttons or click handlers and clicking the heading does not navigate.
+- Subcategory pages resolve their department and heading correctly; existing product search/filter remains functional.
+- Front-end layouts have no horizontal overflow at 320, 390, 768 and 1440px. The banner editor was checked at 390, 768 and 1440px.
+- Real desktop/mobile uploads save to the existing settings table; the front-end and mobile picture source use them. Subcategories inherit department images and retain their own names until overridden.
+- Subcategory overrides are isolated from department settings. Reset restores the fallback; the desktop-on-mobile option removes the mobile source.
+- Unknown category targets, overlong headings, invalid CSRF and SVG uploads are rejected. Entered text survives validation failures. Customers cannot write through the admin endpoint; guests are redirected to sign in.
+- Long accepted copy remains inside the banner at 320, 390 and 1440px using a content-driven minimum height. No JavaScript errors were observed in the main run.
+
+New screenshots: category-desktop.png, category-mobile.png and category-banner-admin.png. Home and homepage-content screenshots have been refreshed. No database schema migration is needed. The hero now uses manual browsing rather than autoplay so only one action is displayed over each poster.

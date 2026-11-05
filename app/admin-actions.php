@@ -1,6 +1,24 @@
 <?php
 $section=(string)($_POST['section']??'dashboard');$id=(int)($_POST['id']??0);
-if($action==='admin_banner_save'){
+if(in_array($action,['admin_catalog_banner_save','admin_catalog_banner_reset'],true)){
+ $scope=text_input('target',60);$targets=catalog_banner_targets();
+ if(!isset($targets[$scope]))throw new RuntimeException('Choose a valid category page.');
+ if($action==='admin_catalog_banner_reset'){
+  db()->beginTransaction();
+  foreach(catalog_banner_keys($scope) as $key)query('DELETE FROM settings WHERE setting_key=?',[$key]);
+  db()->commit();
+ }else{
+  $old=catalog_banner($scope);
+  $heading=text_input('title',100);$subtitle=text_input('subtitle',180);$color=color_input('text_color');
+  $image=upload('image',$old['image'],true);
+  $mobile=isset($_POST['clear_mobile'])?'':upload('mobile_image',$old['mobile_image']);
+  $values=['image'=>$image,'mobile_image'=>$mobile,'title'=>$heading,'subtitle'=>$subtitle,'text_color'=>$color];
+  db()->beginTransaction();
+  foreach($values as $field=>$value)query('INSERT INTO settings(setting_key,setting_value) VALUES(?,?) ON DUPLICATE KEY UPDATE setting_value=VALUES(setting_value)',['catalog_'.$scope.'_'.$field,$value]);
+  db()->commit();
+ }
+ flash('Category page banner saved.');go('admin',['section'=>'catalog','target'=>$scope]);
+}elseif($action==='admin_banner_save'){
  $old=$id?one('SELECT * FROM banners WHERE id=?',[$id]):null;
  $placement=(string)($_POST['placement']??'hero');$alignment=(string)($_POST['alignment']??'left');
  if(!in_array($placement,['hero','campaign'],true)||!in_array($alignment,['left','center','right'],true))throw new RuntimeException('Invalid banner settings.');

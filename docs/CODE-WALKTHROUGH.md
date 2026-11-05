@@ -15,7 +15,7 @@ Use the browser's Network panel to follow a POST → redirect → GET. Refreshin
 | Module | Relevant files/tables | CRUD |
 |---|---|---|
 | User/account | account.php, actions.php; users, addresses | register/create customer, retrieve, edit profile/customer, delete eligible customer/address |
-| Homepage content | admin.php, admin-actions.php, home.php; banners, settings | add, list, edit, delete banner |
+| Homepage content | admin.php, admin-actions.php, home.php, admin-catalog-banners.php, catalog-banners.php; banners, settings | add, list, edit, delete banner |
 | Product/category | catalog.php, admin files; categories, products | add, list/detail, edit, delete |
 | Variant/inventory | admin files, catalog.php; variants, product_images | add, list, edit stock/colour/image, delete |
 | Shopping bag | shop.php, actions.php; cart_items | add, retrieve, update quantity, remove |
@@ -48,3 +48,7 @@ Wishlist and reviews are related supporting functions. Shared UI, architecture a
 7. Each member implements and explains agreed changes in their two modules, keeps a truthful contribution log, and creates their own diagrams/report evidence.
 
 The project is not a replacement for your individual understanding, original work, approved feature scope, or assignment documentation. The specification does not state an AI policy; follow any tutor guidance provided separately.
+
+## Catalogue header implementation
+
+`catalog-banners.php` builds an allowlist of department and existing category targets. The display-only editor stores five settings per target (image, mobile image, title, subtitle and text colour) in the existing settings table. All writes require administrator access and CSRF validation. A subcategory without an image override inherits the department image; reset deletes only that target's five keys. The front-end header has no anchor, button, click handler or destination URL.
