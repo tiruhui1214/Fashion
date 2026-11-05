@@ -46,6 +46,7 @@ Fashion/
     seed.php                Eight illustrative sample products, banners
   database/schema.sql       Database and tables (no private user data)
   assets/                   CSS, JavaScript, original SVG placeholders
+    fonts/                  Self-hosted brand fonts and OFL license texts
   uploads/                  Uploaded JPG/PNG/WebP; copy when migrating
   docs/                     Setup, walkthrough, tests and screenshots
 ```
@@ -58,9 +59,13 @@ Presentation is in the view files/CSS/JS. Application operations and business ru
 
 This is a **working starter**, not a complete assignment submission. Your team must create its own Figma prototype, diagrams, report, process-level tests, UAT, and individual walkthrough. Tutor approval of module boundaries and unique features remains authoritative.
 
-Sample images are original **SVG illustrations**, not product photographs; every sample garment uses a placeholder shirt drawing even when its name is trousers or a dress. Upload your properly sourced photography before presenting the visual design. No external fonts or photo services are used; typography uses local system fonts. Policies, size measurements and shipping rules are demonstration content.
+Sample images are original **SVG illustrations**, not product photographs; every sample garment uses a placeholder shirt drawing even when its name is trousers or a dress. Upload your properly sourced photography before presenting the visual design. Typography uses bundled Cormorant Garamond (display headings) and Manrope (body and controls), licensed under the SIL Open Font License. Font files and license texts are in `assets/fonts`; no runtime font or photo service is required. Policies, size measurements and shipping rules are demonstration content.
 
 No real payment, email delivery/password recovery, refund processing, tax calculation, image cropping, anonymous bag, newsletter service, or drag-and-drop page builder is included. Checkout requires sign-in. Homepage has a fixed section structure; banners can be added/reordered/hidden within their placement, categories can have their images edited, and the featured edit shows the first four flagged products. It does not rearrange every homepage section. Cart is a full page, not a drawer. The application is intended for local demonstration; public deployment needs additional operational/security work.
+
+## Visual update
+
+The editorial theme uses porcelain white, cool stone grey, ink black and muted plum accents, with 16px body text, larger product information, an expanded brand footer and a charcoal admin sidebar. Read [the safe update guide](docs/UPDATE-DESIGN.md) before applying it to an existing XAMPP installation. No database migration is needed.
 
 ## Backup
 

@@ -19,3 +19,26 @@ if(product){const select=product.querySelector('[data-variant-select]'),buttons=
  buttons.forEach(button=>button.addEventListener('click',()=>choose(button)));select?.addEventListener('change',stock);if(buttons[0])choose(buttons[0]);}
 const bannerForm=document.querySelector('[data-banner-form]');
 if(bannerForm){const preview=bannerForm.querySelector('[data-banner-preview]');let objectURL;bannerForm.addEventListener('input',e=>{preview.style.color=bannerForm.elements.text_color.value;preview.querySelector('[data-preview-title]').textContent=bannerForm.elements.title.value||'Your heading';preview.querySelector('[data-preview-subtitle]').textContent=bannerForm.elements.subtitle.value||'Supporting text';preview.querySelector('div').style.textAlign=bannerForm.elements.alignment.value;});bannerForm.elements.image.addEventListener('change',e=>{const file=e.target.files[0];if(file&&['image/jpeg','image/png','image/webp'].includes(file.type)){if(objectURL)URL.revokeObjectURL(objectURL);objectURL=URL.createObjectURL(file);preview.querySelector('img').src=objectURL;}});}
+
+// Keyboard navigation and motion are progressive enhancements; all content remains visible without JS.
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && nav?.classList.contains('open')) {
+    nav.classList.remove('open');
+    menu?.setAttribute('aria-expanded', 'false');
+    menu?.setAttribute('aria-label', 'Open navigation');
+    menu?.focus();
+  }
+});
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+  const reveal = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.animate(
+        [{ opacity: .5, transform: 'translateY(16px)' }, { opacity: 1, transform: 'translateY(0)' }],
+        { duration: 700, easing: 'cubic-bezier(.22,.61,.36,1)' }
+      );
+      reveal.unobserve(entry.target);
+    });
+  }, { threshold: .12 });
+  document.querySelectorAll('.section-heading, .brand-note, .department-card').forEach(element => reveal.observe(element));
+}

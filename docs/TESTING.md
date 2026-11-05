@@ -113,3 +113,21 @@ The repeated-checkout and cancellation database assertions verified exact row co
 - Export/restore your real demonstration database and upload directory on the second computer.
 - Test simultaneous shoppers, larger catalogues, low disk space and server restarts if included in your test scope.
 - Capture your own before/after screenshots, expected/actual results, UAT and individual walkthrough.
+
+## Editorial redesign validation — 6 November 2026
+
+103 additional browser assertions passed on PHP 8.4.27 / MariaDB 11.8.6 / Chromium. No database schema or business-action code changed in this redesign.
+
+- Self-hosted Manrope and Cormorant Garamond load successfully; a separate context blocks all public-host requests and still loads the brand fonts.
+- Porcelain body colour and 16px body typography are verified from computed styles.
+- Home, catalogue, product, login, register, about and size guide have no horizontal page overflow at 360, 390, 768, 1024 and 1440px widths.
+- Seven admin sections have no horizontal page overflow at 390, 768, 1024 and 1440px. Wide tables retain their own scroll containers.
+- Hero next control, colour image switching, catalogue search, mobile menu open/Escape close and banner preview remain functional.
+- Account, bag, checkout, order list and wishlist layouts render at 390 and 1440px.
+- A real add/update/remove bag flow validates the redesigned purchase controls and RM 259.80 total for two RM 129.90 items. Populated bag and checkout forms render at 360, 390, 768 and 1440px.
+- Motion-enabled reveal finishes with content visible; reduced-motion contexts disable the enhancement.
+- All home product images decode after requesting lazy images. Screenshots are captured with local fonts and images loaded.
+- No JavaScript errors or failed resource responses were observed in the main responsive run.
+- PHP and JavaScript syntax checks pass.
+
+Updated screenshots include home desktop/mobile, product, login, homepage-content admin and dashboard. The imagery is still illustrative placeholder artwork. Actual Windows/XAMPP use and integration with your locally modified source require checking on your machine.
