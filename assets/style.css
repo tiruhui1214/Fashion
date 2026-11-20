@@ -702,3 +702,12 @@ tbody tr:hover { background: #f7f7f4; }
   html { scroll-behavior: auto; }
   *, *:before, *:after { transition: none !important; animation: none !important; }
 }
+
+/* Integrated feature controls retain the existing editorial design system. */
+.recommendation-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap:24px; }
+.recommendation-grid img { aspect-ratio:3/4; object-fit:cover; border-radius:var(--radius-card); }
+.recommendation-grid p { font-size:14px; }
+.checkbox input[type=checkbox] { width:20px; height:20px; flex-shrink:0; }
+.inline-form { flex-wrap:wrap; }
+.order-summary small { display:block; margin-top:20px; }
+@media(max-width:640px) { .recommendation-grid { gap:14px; } .cart-item { min-width:0; } .cart-item strong { overflow-wrap:anywhere; } }

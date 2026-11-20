@@ -6,3 +6,5 @@
 /.installed
 *.log
 .DS_Store
+
+/ai.local.php

@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 ini_set('display_errors', '0');
+date_default_timezone_set('Asia/Kuala_Lumpur');
 session_set_cookie_params(['httponly' => true, 'samesite' => 'Lax', 'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off']);
 session_start();
 const ROOT = __DIR__ . '/..';
@@ -16,7 +17,7 @@ function db(): PDO { static $pdo; if(!$pdo) { $c=config(); $pdo=new PDO("mysql:h
 function query(string $sql,array $params=[]): PDOStatement { $s=db()->prepare($sql); $s->execute($params); return $s; }
 function all(string $sql,array $params=[]): array { return query($sql,$params)->fetchAll(); }
 function one(string $sql,array $params=[]): ?array { return query($sql,$params)->fetch()?:null; }
-function user(): ?array { return empty($_SESSION['uid'])?null:one('SELECT id,name,email,role FROM users WHERE id=?',[$_SESSION['uid']]); }
+function user(): ?array { return empty($_SESSION['uid'])?null:one('SELECT id,name,email,phone,role FROM users WHERE id=? AND active=1',[$_SESSION['uid']]); }
 function login_required(): array { $u=user(); if(!$u) {flash('Please sign in to continue.','info');go('login');} return $u; }
 function admin_required(): array { $u=login_required(); if($u['role']!=='admin') {http_response_code(403);exit('Access denied. Administrator access is required.');} return $u; }
 function money($value): string { return 'RM '.number_format((float)$value,2); }
@@ -35,19 +36,19 @@ function upload(string $field,string $existing='',bool $required=false): string 
  $path='uploads/'.bin2hex(random_bytes(16)).'.'.$types[$mime];
  if(!move_uploaded_file($f['tmp_name'],ROOT.'/'.$path))throw new RuntimeException('Cannot save image. Check uploads folder permissions.');return $path;
 }
-function cart_rows(int $uid,bool $lock=false): array { return all('SELECT c.id,c.quantity,v.id variant_id,v.stock,v.color,v.size,v.image,p.id product_id,p.name,p.price,p.active FROM cart_items c JOIN variants v ON v.id=c.variant_id JOIN products p ON p.id=v.product_id WHERE c.user_id=? ORDER BY v.id'.($lock?' FOR UPDATE':''),[$uid]); }
-function cart_subtotal(array $rows): int { $sum=0;foreach($rows as $r)$sum+=(int)round((float)$r['price']*100)*(int)$r['quantity'];return $sum; }
+function cart_rows(int $uid,bool $lock=false): array { return all('SELECT c.id,c.quantity,c.is_selected,v.id variant_id,v.stock,v.color,v.size,v.image,p.id product_id,p.name,p.price,(p.active AND v.active) active,cat.name category,cat.department FROM cart_items c JOIN variants v ON v.id=c.variant_id JOIN products p ON p.id=v.product_id JOIN categories cat ON cat.id=p.category_id WHERE c.user_id=? ORDER BY v.id'.($lock?' FOR UPDATE':''),[$uid]); }
+function cart_subtotal(array $rows): int { $sum=0;foreach($rows as $r)$sum+=to_cents((string)$r['price'])*(int)$r['quantity'];return $sum; }
 function cancel_order(int $id,int $uid,bool $admin=false): void {
  db()->beginTransaction();try{
  $o=one('SELECT * FROM orders WHERE id=? FOR UPDATE',[$id]);
  if(!$o||(!$admin&&(int)$o['user_id']!==$uid))throw new RuntimeException('Order not found.');
  if(!in_array($o['status'],['Confirmed','Processing'],true))throw new RuntimeException('Only confirmed or processing orders can be cancelled.');
  foreach(all('SELECT * FROM order_items WHERE order_id=? ORDER BY variant_id',[$id]) as $item) if($item['variant_id'])query('UPDATE variants SET stock=stock+? WHERE id=?',[$item['quantity'],$item['variant_id']]);
- query("UPDATE orders SET status='Cancelled' WHERE id=?",[$id]);db()->commit();
+ query("UPDATE orders SET status='Cancelled',last_status_updated_by_admin_id=CASE WHEN ?=1 THEN ? ELSE last_status_updated_by_admin_id END WHERE id=?",[$admin?1:0,$uid,$id]);record_status($id,$uid,$o['status'],'Cancelled');db()->commit();
  }catch(Throwable $ex){if(db()->inTransaction())db()->rollBack();throw $ex;}
 }
 function product_card(array $p): void {
- $variants=all('SELECT color,hex,MIN(image) image,SUM(stock) stock FROM variants WHERE product_id=? GROUP BY color,hex ORDER BY MIN(id)',[$p['id']]);
+ $variants=all('SELECT color,hex,MIN(image) image,SUM(stock) stock FROM variants WHERE product_id=? AND active=1 GROUP BY color,hex ORDER BY MIN(id)',[$p['id']]);
  $first=$variants[0]??['image'=>'assets/product-sage.svg']; ?>
  <article class="product-card"><div class="product-photo"><a href="<?=e(url('product',['id'=>$p['id']]))?>"><img loading="lazy" src="<?=e(safe_image($first['image']))?>" alt="<?=e($p['name'])?>"></a><form method="post"><?=token()?><input type="hidden" name="action" value="wishlist"><input type="hidden" name="id" value="<?=e($p['id'])?>"><button class="heart" aria-label="Toggle wishlist for <?=e($p['name'])?>"><?=icon('heart')?></button></form><?php if($p['featured']):?><span class="photo-label">THE FORME EDIT</span><?php endif;?></div>
  <div class="card-meta"><small><?=e($p['department']??'FORME')?></small><span><?=money($p['price'])?></span></div><a class="product-name" href="<?=e(url('product',['id'=>$p['id']]))?>"><?=e($p['name'])?></a><div class="swatches"><?php foreach($variants as $i=>$v):?><button type="button" class="swatch <?=$i===0?'selected':''?>" style="--swatch:<?=e($v['hex'])?>" data-card-image="<?=e(safe_image($v['image']))?>" aria-label="Show <?=e($v['color'])?>" title="<?=e($v['color'])?>"></button><?php endforeach;?></div></article>
@@ -61,3 +62,4 @@ function icon(string $name): string {
 }
 
 require_once __DIR__ . '/catalog-banners.php';
+require_once __DIR__ . '/feature-services.php';

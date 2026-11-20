@@ -1,3 +1,9 @@
+# Update: stages 1–7
+
+The source now includes promotion checkout, selected-item purchasing, full/default saved addresses, account/variant activation, per-variant stock thresholds, moderation-aware average ratings, an optional AI fashion assistant with explicit catalogue-rule fallback, payment records and order status history.
+
+**Existing installation:** preserve uploads, config.local.php and .installed when copying source. Back up the database and run `database/migrations/20261120_features.php` with PHP CLI from the deployed folder. Read [FEATURES-UPGRADE.md](docs/FEATURES-UPGRADE.md), [AI-SETUP.md](docs/AI-SETUP.md) and [FEATURES-TESTING.md](docs/FEATURES-TESTING.md). The original starter description below describes the baseline; these update documents describe the new behaviours and schema differences.
+
 # FORME — Online Fashion Store Management
 
 A local-first teaching project built with **PHP 8.2+**, **MariaDB 10.4+**, HTML, CSS and vanilla JavaScript. Intended for Windows + XAMPP + VS Code. No npm, Composer, cloud account, payment API or Internet connection is needed to run the installed store.

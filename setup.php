@@ -7,6 +7,12 @@ if($_SERVER['REQUEST_METHOD']==='POST'&&!$installed){
   if(!filter_var($email,FILTER_VALIDATE_EMAIL)||strlen($password)<10||strlen($password)>72)throw new RuntimeException('Use a valid email and an administrator password of 10–72 characters.');
   $c=config();if(!preg_match('/^[A-Za-z0-9_]+$/D',$c['database']))throw new RuntimeException('Invalid database name.');
   $pdo=new PDO("mysql:host={$c['host']};port={$c['port']};charset=utf8mb4",$c['username'],$c['password'],[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION]);
+  // A fresh-install schema is not a migration for existing tables.
+  $existingUsers=$pdo->prepare("SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA=? AND TABLE_NAME='users'");
+  $existingUsers->execute([$c['database']]);
+  if($existingUsers->fetchColumn() && $pdo->query("SELECT id FROM `".$c['database']."`.users WHERE role='admin' LIMIT 1")->fetchColumn()) {
+   throw new RuntimeException('An existing store was found. Do not reinstall. Preserve .installed and run database/migrations/20261120_features.php with PHP CLI, then open index.php?page=login.');
+  }
   // Run the checked-in schema using the database name from local configuration.
   $sql=file_get_contents(__DIR__.'/database/schema.sql');$sql=str_replace(['CREATE DATABASE IF NOT EXISTS forme','USE forme'],['CREATE DATABASE IF NOT EXISTS `'.$c['database'].'`','USE `'.$c['database'].'`'],$sql);
   foreach(explode(';',$sql) as $statement)if(trim($statement)!=='')$pdo->exec($statement);

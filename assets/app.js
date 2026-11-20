@@ -156,3 +156,14 @@ document.querySelectorAll('.btn').forEach(button => {
 motionPreference.addEventListener('change', () => {
   if (motionPreference.matches) decorativeAnimations.forEach(animation => animation.cancel());
 });
+
+// Persist selection before calculating totals and complementary outfits.
+const selectionForm = document.querySelector('#cart-selection');
+if (selectionForm) {
+  const checks = [...document.querySelectorAll('[data-cart-selected]')];
+  document.querySelector('[data-select-all]')?.addEventListener('change', event => {
+    checks.forEach(check => check.checked = event.target.checked);
+    selectionForm.requestSubmit();
+  });
+  checks.forEach(check => check.addEventListener('change', () => selectionForm.requestSubmit()));
+}
