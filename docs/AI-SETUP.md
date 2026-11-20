@@ -4,7 +4,7 @@
 
 Two independent entry points are implemented:
 
-- Style assistant in navigation/account: signed-in customers describe preferences and refine them. Session history stores a bounded conversation and the current filters. No cart prerequisite.
+- Bottom-right floating Style assistant: signed-in customers describe preferences and refine them without leaving the current page. Session history stores a bounded conversation and the current filters. No cart prerequisite. Open/close, cross-page conversation persistence and async send/reset are described in FLOATING-CHAT.md.
 - Shopping bag: selected items drive automatic complementary-category suggestions; selection changes refresh results, and no selection hides them. Already occupied outfit roles are excluded.
 
 Without configuration the interface says **Catalogue rules**. The bilingual fallback recognises common colour, size, style, occasion, budget and no-skirt/dress phrases; it is not a general language model. Unknown wording may need rephrasing. Budget is explicitly **per product**, not an asserted full-outfit budget. It offers individual pieces and links to variant selection, rather than silently adding products to the bag.

@@ -217,3 +217,30 @@
 - 增量升级后缺失字段为 0；原管理员保留。
 - 三项 schema 回归检查及修改文件 PHP 语法检查通过；随后验证实际首页、登录及登录资料查询。
 - API Key、AI 配置、密码和商品资料没有在本次修复中更改。
+
+
+## 2026-11-20｜批次 7：右下角悬浮聊天窗口
+
+### 修改内容
+- Chatbot 统一为前台页面右下角的浮动按钮，点击展开窗口；后台管理页不显示。
+- 移除导航栏和账户页的独立聊天页面入口；旧 page=assistant 地址转到首页并展开悬浮窗口。
+- 发送、继续修改偏好、重置均通过异步接口完成，当前页面不刷新或跳转。
+- 关闭／重新打开保留会话；进入推荐商品页面后继续显示窗口与对话。
+- 增加输入长度验证、发送中状态、短暂发送间隔、重复请求去重、错误提示、网络失败后保留输入和刷新重试。
+- 未登录时在窗口内显示登录入口；服务端保留登录、CSRF 和已停用账户检查。
+- 商品卡片显示实时可用款式、价格及链接；文本继续经过转义，不执行用户或模型提供的 HTML。
+- 手机宽高、可视窗口和键盘空间适配；Escape 关闭并把焦点返回按钮。
+- 重置只清除会话内容，不清除发送间隔，防止重置后重复请求绕过限制。
+
+### 文件
+- 修改 index.php、app/account-profile.php、app/feature-actions.php、app/assistant.php。
+- 新增 app/assistant-service.php、app/assistant-api.php、app/assistant-content.php、app/assistant-widget.php。
+- 新增 assets/chatbot.css、assets/chatbot.js、tests/assistant-service.php。
+- 更新 docs/AI-SETUP.md；新增 docs/FLOATING-CHAT.md。
+
+### 验证及部署
+- 7 项会话服务检查、17 项 HTTP 接口检查通过。
+- 26 项桌面／手机浏览器检查通过：发送不跳页、实际商品结果、窗口尺寸、重开保留、商品跳转、Escape 焦点、断网保留输入及恢复；无 JS 错误。
+- 在独立测试数据库和测试账号验证，不修改实际客户资料或数据库。
+- 实际模型仍由 ai.local.php 控制；未配置或失败时明确采用规则推荐。本批次没有读取／改写密钥，也未调用付费模型。
+- 写入当前 C:/xampp/htdocs/Fashion；不修改数据库结构、Git 分支或提交。

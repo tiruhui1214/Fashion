@@ -81,16 +81,8 @@ if($action==='review'){
     query('INSERT INTO reviews(user_id,product_id,rating,comment) VALUES(?,?,?,?) ON DUPLICATE KEY UPDATE rating=VALUES(rating),comment=VALUES(comment),customer_deleted=0',[$uid,$pid,$rating,$comment]);flash('Review saved.');go('product',['id'=>$pid]);
 }
 if($action==='assistant_message'||$action==='assistant_reset'){
-    require_once __DIR__.'/recommendations.php';
-    if($action==='assistant_reset'){unset($_SESSION['assistant']);go('assistant');}
-    $message=text_input('message',600);$history=$_SESSION['assistant']??['preferences'=>[],'messages'=>[]];
-    $last=(int)($_SESSION['assistant_last']??0);if(time()-$last<2)throw new RuntimeException('Please wait a moment before sending another request.');$_SESSION['assistant_last']=time();
-    $history['preferences']=parse_preferences($message,$history['preferences']);
-    $history['messages'][]=['role'=>'user','text'=>$message];$history['messages']=array_slice($history['messages'],-12);
-    $history['result']=recommendations($history['preferences'],$message,$history['messages']);
-    $history['preferences']=$history['result']['preferences'];
-    $names=array_column($history['result']['items'],'name');
-    $history['messages'][]=['role'=>'assistant','text'=>$names?'Suggested: '.implode(', ',$names).'. Open a product below to select its variant.':'No matching products found. Try changing your preferences.'];
-    $history['messages']=array_slice($history['messages'],-12);
-    $_SESSION['assistant']=$history;go('assistant');
+    require_once __DIR__.'/recommendations.php';require_once __DIR__.'/assistant-service.php';
+    if($action==='assistant_reset')assistant_reset_conversation();
+    else assistant_send_message(text_input('message',600));
+    go('home',['chat'=>'open']);
 }
