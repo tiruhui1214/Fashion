@@ -13,7 +13,7 @@ try {
   }else{
    $u=one('SELECT * FROM users WHERE email=?',[$email]);if(!$u||!$u['active']||!password_verify($password,$u['password_hash']))throw new RuntimeException('Email or password is incorrect.');
   }
-  session_regenerate_id(true);$_SESSION['uid']=(int)$u['id'];$_SESSION['csrf']=bin2hex(random_bytes(32));unset($_SESSION['checkout_key'],$_SESSION['quote_secret'],$_SESSION['promo_code'],$_SESSION['assistant'],$_SESSION['cart_recommendations']);flash('Welcome to FORME.');go('account');
+  session_regenerate_id(true);$_SESSION['uid']=(int)$u['id'];$_SESSION['csrf']=bin2hex(random_bytes(32));unset($_SESSION['checkout_key'],$_SESSION['quote_secret'],$_SESSION['promo_code'],$_SESSION['assistant'],$_SESSION['cart_recommendations']);flash('Welcome to HIFIVE.');go('account');
  }
  if($action==='logout'){$_SESSION=[];session_regenerate_id(true);flash('You have signed out.');go();}
  $u=login_required();$uid=(int)$u['id'];

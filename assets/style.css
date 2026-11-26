@@ -1,4 +1,4 @@
-/* FORME / Editorial design system. Self-hosted fonts: see assets/fonts/*-OFL.txt. */
+/* HIFIVE / Editorial design system. Self-hosted fonts: see assets/fonts/*-OFL.txt. */
 @font-face {
   font-family: 'Manrope';
   src: url('fonts/Manrope.ttf') format('truetype');
@@ -711,3 +711,35 @@ tbody tr:hover { background: #f7f7f4; }
 .inline-form { flex-wrap:wrap; }
 .order-summary small { display:block; margin-top:20px; }
 @media(max-width:640px) { .recommendation-grid { gap:14px; } .cart-item { min-width:0; } .cart-item strong { overflow-wrap:anywhere; } }
+
+
+/* HIFIVE supplied brand assets. Keep original colour on readable surfaces. */
+.site-header .wordmark { display: inline-flex; align-items: center; flex-shrink: 0; line-height: 1; }
+.site-header .brand-logo-primary { display: block; width: 180px; height: 60px; max-height: none; object-fit: contain; }
+.site-header.overlay:not(.scrolled) .wordmark { padding: 4px 12px; border-radius: 8px; background: #fcfcfaf2; }
+.footer-brand { display: inline-flex; align-items: center; gap: 14px; white-space: normal; }
+.brand-symbol { display: block; object-fit: contain; flex-shrink: 0; }
+.footer-brand .brand-symbol { width: 88px; height: 88px; background: var(--paper); border-radius: 12px; }
+.footer-brand .brand-name { margin: 0; font: 500 28px/1 var(--serif); letter-spacing: .08em; }
+.admin-sidebar .admin-brand { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.admin-brand .brand-symbol { background: var(--paper); border-radius: 10px; }
+.admin-brand .brand-name { margin: 0; font: 500 28px/1 var(--serif); color: #fff; }
+.admin-brand span:last-child { margin: 0; }
+.auth-brand { display: inline-block; margin-bottom: 26px; }
+.auth-brand img, .setup-brand img { display: block; width: min(240px, 100%); height: auto; }
+@media (max-width: 640px) {
+ .site-header .brand-logo-primary { width: 120px; height: 40px; }
+ .site-header.overlay:not(.scrolled) .wordmark { padding: 3px 7px; }
+ .footer-brand .brand-symbol { width: 72px; height: 72px; }
+}
+@media (max-width: 360px) {
+ .site-header .brand-logo-primary { width: 102px; height: 34px; }
+}
+
+@media (max-width: 640px) {
+ .site-header { gap: 4px; }
+ .site-header .menu-toggle { width: 36px; padding: 6px; flex-shrink: 0; }
+ .site-header .header-tools { gap: 2px; flex-shrink: 0; }
+ .site-header .header-tools > a[title] { width: 29px; }
+ .site-header .account-link { padding-inline: 4px; font-size: 12px; }
+}

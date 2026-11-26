@@ -4,12 +4,10 @@
 
 ## 当前部署状态
 
-- 开发源码：`C:\Users\lemet\Desktop\Mini Project\Fashion`。
-- 下述第 1–7 阶段修改写入桌面源码后，由用户复制到 XAMPP。
-- XAMPP 当前网站只修复了缺失的 `.installed` 安装标记；没有自动覆盖其业务代码或升级其现有数据库。
-- 复制新版时保留 XAMPP 原有的 `.installed`、`config.local.php` 和 `uploads`。
-- 旧数据库需要在部署目录执行 `database/migrations/20261120_features.php`；不要重新安装或导入全新 schema 覆盖已有资料。
-- 未提供真实 AI API Key，因此尚未验证真实模型服务；未发生付费模型调用。
+- 本地维护源码：`C:\xampp\htdocs\Fashion`；旧桌面副本不再作为当前修改目标。
+- 小组共同网站由用户部署至 alwaysdata，账号改为 hifive；本地改动需上传才上线。
+- 现有配置、数据库、`.installed` 和上传内容由部署负责人保留；品牌改名不改数据库名。
+- 真实 AI 服务状态以服务器配置和实际调用测试为准；历史无密钥测试不能代表当前线上状态。
 
 ## 2026-11-20｜批次 1：Promotion 数据库准备
 
@@ -244,3 +242,73 @@
 - 在独立测试数据库和测试账号验证，不修改实际客户资料或数据库。
 - 实际模型仍由 ai.local.php 控制；未配置或失败时明确采用规则推荐。本批次没有读取／改写密钥，也未调用付费模型。
 - 写入当前 C:/xampp/htdocs/Fashion；不修改数据库结构、Git 分支或提交。
+
+## 2026-11-26｜HIFIVE 品牌与文档整理
+
+### 修改
+
+- 页面标题、导航/页脚、首页、商品卡片、登录注册、后台、订单、安装界面和内置 SVG 品牌文字改为 HIFIVE；旧 brand_name 设置显示兼容，不直接写数据库。
+- 已逐份阅读 docs/ 原有 9 份 Markdown，合并优惠/设计升级、AI/浮动聊天与测试入口；保留 archive 原文和旧截图，详见 docs/DOCUMENT-CHANGES.md。
+- 更新根 README、START-HERE、代码模块讲解及部署状态；新增 alwaysdata 部署/小组协作指南。
+- 恢复不含真实密码或 key 的 config.example.php、ai.example.php；本地新安装默认库名 hifive，既有数据库名与安装 SQL placeholder 保留。
+- 隐私页面改为配置数据库的准确描述，不再宣称一定储存在本地。
+
+### 保留与部署
+
+- 不修改 config.local.php、ai.local.php、.installed、上传内容、订单/SKU、数据库结构或数据。不自动上传服务器。
+- 上线请上传修改过的 index.php、setup.php、app/、assets/、模板和文档；保留服务器凭据/安装锁/uploads。
+- 旧 raster logo 或自定义海报中的品牌字样需由后台上传新图片；本次没有生成或替换 Logo。
+
+### 验证
+
+验证结果在完成实际检查后补充；历史测试不冒充本次运行。
+
+### 本批次验证
+
+- 44 个 PHP 文件语法检查通过；32 promotion、39 feature、13 recommendation、7 assistant、3 schema readiness 检查通过（共 94 项）。
+- 临时 fixture 执行 5 项品牌兼容检查：缺省、旧值、旧值空白/大小写、自定义品牌、非品牌设置。
+- 当前 Markdown 相对链接和品牌残留扫描通过。数据库兼容标识与历史归档原文按设计保留。
+- 未执行在线登录/下单测试、真实模型请求或线上部署；旧截图未重拍。
+
+## 2026-11-26｜文档精简为 README 与 CHANGELOG
+
+### 合并与移除
+
+- 根 README.md 统一中文说明：线上访问、本地安装、六模块规则、数据库/AI 配置、浮动聊天、alwaysdata/SFTP/HTTPS、更新/migration、备份恢复、图片、测试与故障排查。
+- docs/README.md、WINDOWS-SETUP.md、DEPLOYMENT.md、FEATURES-UPGRADE.md、AI-SETUP.md、TESTING.md 的现行内容合入根 README；DOCUMENT-CHANGES.md 的本次处理结果记录在这里。
+- 移除上述 7 个 docs Markdown 以及 docs/archive 中 5 个历史 Markdown，共 12 个。删除前完整备份到项目外的 hifive-update/docs-before-consolidation/，包含原始历史测试说明；旧截图/字体授权不删除。
+- 保留 docs/CODE-WALKTHROUGH.md 供学习/presentation，修正其 AI 文档链接；START-HERE 和后台帮助入口改为 README。
+- 此后修改记录继续追加 CHANGELOG，不再为每次说明新增一份 docs Markdown。前面历史批次提及的旧文件名是当时记录，并非当前入口。
+
+### 历史测试摘要（不代表本次重新执行）
+
+- 2026-11-06：Linux/PHP 8.4.27/MariaDB 11.8.6/Chromium 基础 77 项，随后设计批次分别记录 103、68、68、100 项。
+- 2026-11-20 阶段 1–7：Windows/PHP 8.5.12/MariaDB 10.11.16/Edge，32 promotion、39 feature、13 recommendation、79 integration、16 browser；隔离库/fixture 范围见项目外原文备份。
+- 浮动聊天历史记录：7 service、17 HTTP、26 browser。早期优惠阶段另记录 14 HTTP。不同批次覆盖可能重叠，不能相加当作当前全站覆盖率。
+- 先前 HIFIVE 替换批次实际运行结果仍保留在本文件前文。
+
+### 验证与范围
+
+- 校验保留文档的相对链接/README 目录锚点，扫描现行入口中已删除指南的引用；确认最终只保留 3 个项目 Markdown。
+- 后台帮助 PHP 语法检查；这是文档与帮助文字调整，没有重新执行订单集成或真实 API 测试。
+- 保留既有业务代码修改，不修改凭据、数据库或上传图片；未自动部署线上。
+
+
+## 2026-11-26｜准备 testing 自动部署
+
+- 新增 .github/workflows/deploy-testing.yml：仅 testing push/手动触发，最小仓库读取权限、同组串行部署、PHP lint 和五个规则检查先于上传。
+- 新增 .github/scripts/deploy_sftp.py：只上传 Git 跟踪的应用目录/指定根文件，SFTP 主机公钥严格校验，每个文件临时上传后原子替换，拒绝未安装目标目录。
+- 保留线上 config.local.php、ai.local.php、.installed、uploads；不运行 SQL/setup，不自动删除远端旧文件。
+- README 添加五项 GitHub Secrets、主机公钥核对、触发条件、失败检查与首次启用步骤；.gitignore 排除 VS Code SFTP 配置。
+- 本地通过部署文件过滤 21 项检查和 Python 语法检查。YAML 尚未用专用解析器/Actions 执行；未配置远端 Secrets，未连接 SFTP、未部署或 push。
+- 此配置需提交到 testing 并在 GitHub 填入 Secrets 才生效；既有未提交品牌与文档改动保留。
+
+
+## 2026-11-26｜接入用户提供的三个 HIFIVE Logo
+
+- 原样复制 D:/ 的 PrimaryLogo、BrandLogo、Favicon SVG 到 assets/branding。横版用于导航、登录注册和安装页，方形用于页脚及后台，favicon 接入共享页面和安装页面 head。
+- 新增 brand_asset 固定映射和文件版本参数；safe_image 只允许三个明确 SVG 路径，任意上传 SVG 仍被拒绝。
+- 响应式尺寸和浅色衬底保留原色；移除后台已不生效的旧备用 logo 上传字段，旧设置/图片不删除。
+- README 说明素材位置、用途和上传清单。源文件字节不变，总计约 3 MB（内嵌 PNG），本次未压缩或重绘。
+- 5 个修改的 PHP 语法检查通过，固定 SVG 内容检查通过。桌面静态浏览器预览已查看；手机宽度预览发现间距问题后收紧 header，最终手机实际设备仍待上线验收。浏览器控制工具未能启动，改用无界面 Edge 预览；没有登录、调用模型或修改数据库。
+- 仅本地文件更新；不更改 config.local.php、ai.local.php、.installed、uploads 或数据库。未推送/上传线上。

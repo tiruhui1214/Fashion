@@ -1,0 +1,49 @@
+name: Deploy testing to alwaysdata
+
+on:
+  push:
+    branches: [testing]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: alwaysdata-testing
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/testing'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out the submitted version
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Check PHP syntax and rule fixtures
+        shell: bash
+        run: |
+          set -euo pipefail
+          php --version
+          while IFS= read -r -d '' file; do
+            php -l "$file" >/dev/null
+          done < <(find app database tests -type f -name '*.php' -print0)
+          for file in index.php setup.php config.example.php ai.example.php; do
+            php -l "$file"
+          done
+          for test in promotions features recommendation-service assistant-service schema-readiness; do
+            php "tests/$test.php"
+          done
+      - name: Install SFTP client library
+        run: python -m pip install --disable-pip-version-check paramiko==5.1.0
+      - name: Upload application files
+        env:
+          DEPLOY_HOST: ${{ secrets.ALWAYSDATA_HOST }}
+          DEPLOY_USER: ${{ secrets.ALWAYSDATA_USER }}
+          DEPLOY_PASSWORD: ${{ secrets.ALWAYSDATA_PASSWORD }}
+          DEPLOY_PATH: ${{ secrets.ALWAYSDATA_PATH }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.ALWAYSDATA_KNOWN_HOSTS }}
+          DEPLOY_REVISION: ${{ github.sha }}
+        run: python .github/scripts/deploy_sftp.py

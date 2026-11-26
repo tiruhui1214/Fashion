@@ -24,7 +24,7 @@ function money($value): string { return 'RM '.number_format((float)$value,2); }
 function text_input(string $name,int $max=255): string { $v=trim((string)($_POST[$name]??'')); if($v===''||mb_strlen($v)>$max) throw new RuntimeException(ucwords(str_replace('_',' ',$name))." is required (maximum $max characters)."); return $v; }
 function integer_input(string $name,int $min=0,int $max=100000): int { $v=filter_var($_POST[$name]??null,FILTER_VALIDATE_INT); if($v===false||$v===null||$v<$min||$v>$max)throw new RuntimeException("Enter a valid $name between $min and $max."); return $v; }
 function color_input(string $name): string { $v=(string)($_POST[$name]??'');if(!preg_match('/^#[0-9a-fA-F]{6}$/',$v))throw new RuntimeException('Choose a valid colour.');return $v; }
-function safe_image(?string $path): string { if($path&&preg_match('~^(assets/[a-zA-Z0-9_.-]+\.(svg|jpg|jpeg|png|webp)|uploads/[a-f0-9]+\.(jpg|png|webp))$~D',$path)) return $path; return 'assets/product-sage.svg'; }
+function safe_image(?string $path): string { if(in_array($path,['assets/branding/HIFIVE_PrimaryLogo.svg','assets/branding/HIFIVE_BrandLogo.svg','assets/branding/HIFIVE_Favicon.svg'],true))return $path; if($path&&preg_match('~^(assets/[a-zA-Z0-9_.-]+\.(svg|jpg|jpeg|png|webp)|uploads/[a-f0-9]+\.(jpg|png|webp))$~D',$path)) return $path; return 'assets/product-sage.svg'; }
 function upload(string $field,string $existing='',bool $required=false): string {
  $f=$_FILES[$field]??null;
  if(!$f||$f['error']===UPLOAD_ERR_NO_FILE){if($required&&!$existing)throw new RuntimeException('Please upload an image.');return $existing;}
@@ -50,11 +50,16 @@ function cancel_order(int $id,int $uid,bool $admin=false): void {
 function product_card(array $p): void {
  $variants=all('SELECT color,hex,MIN(image) image,SUM(stock) stock FROM variants WHERE product_id=? AND active=1 GROUP BY color,hex ORDER BY MIN(id)',[$p['id']]);
  $first=$variants[0]??['image'=>'assets/product-sage.svg']; ?>
- <article class="product-card"><div class="product-photo"><a href="<?=e(url('product',['id'=>$p['id']]))?>"><img loading="lazy" src="<?=e(safe_image($first['image']))?>" alt="<?=e($p['name'])?>"></a><form method="post"><?=token()?><input type="hidden" name="action" value="wishlist"><input type="hidden" name="id" value="<?=e($p['id'])?>"><button class="heart" aria-label="Toggle wishlist for <?=e($p['name'])?>"><?=icon('heart')?></button></form><?php if($p['featured']):?><span class="photo-label">THE FORME EDIT</span><?php endif;?></div>
- <div class="card-meta"><small><?=e($p['department']??'FORME')?></small><span><?=money($p['price'])?></span></div><a class="product-name" href="<?=e(url('product',['id'=>$p['id']]))?>"><?=e($p['name'])?></a><div class="swatches"><?php foreach($variants as $i=>$v):?><button type="button" class="swatch <?=$i===0?'selected':''?>" style="--swatch:<?=e($v['hex'])?>" data-card-image="<?=e(safe_image($v['image']))?>" aria-label="Show <?=e($v['color'])?>" title="<?=e($v['color'])?>"></button><?php endforeach;?></div></article>
+ <article class="product-card"><div class="product-photo"><a href="<?=e(url('product',['id'=>$p['id']]))?>"><img loading="lazy" src="<?=e(safe_image($first['image']))?>" alt="<?=e($p['name'])?>"></a><form method="post"><?=token()?><input type="hidden" name="action" value="wishlist"><input type="hidden" name="id" value="<?=e($p['id'])?>"><button class="heart" aria-label="Toggle wishlist for <?=e($p['name'])?>"><?=icon('heart')?></button></form><?php if($p['featured']):?><span class="photo-label">THE HIFIVE EDIT</span><?php endif;?></div>
+ <div class="card-meta"><small><?=e($p['department']??'HIFIVE')?></small><span><?=money($p['price'])?></span></div><a class="product-name" href="<?=e(url('product',['id'=>$p['id']]))?>"><?=e($p['name'])?></a><div class="swatches"><?php foreach($variants as $i=>$v):?><button type="button" class="swatch <?=$i===0?'selected':''?>" style="--swatch:<?=e($v['hex'])?>" data-card-image="<?=e(safe_image($v['image']))?>" aria-label="Show <?=e($v['color'])?>" title="<?=e($v['color'])?>"></button><?php endforeach;?></div></article>
 <?php }
 
-function setting(string $key,string $default=''): string { $r=one('SELECT setting_value FROM settings WHERE setting_key=?',[$key]);return $r?$r['setting_value']:$default; }
+function setting(string $key,string $default=''): string {
+ $r=one('SELECT setting_value FROM settings WHERE setting_key=?',[$key]);
+ $value=$r?(string)$r['setting_value']:$default;
+ // Present an existing legacy brand setting under the new name without rewriting store data.
+ return $key==='brand_name'&&strcasecmp(trim($value),'FORME')===0?'HIFIVE':$value;
+}
 
 function icon(string $name): string {
  $paths=['search'=>'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>','heart'=>'<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/>','bag'=>'<path d="M5 7h14l1 14H4L5 7Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>'];
@@ -63,3 +68,11 @@ function icon(string $name): string {
 
 require_once __DIR__ . '/catalog-banners.php';
 require_once __DIR__ . '/feature-services.php';
+
+
+// Fixed, reviewed brand assets; arbitrary uploaded SVG remains disallowed.
+function brand_asset(string $kind='primary'): string {
+ $files=['primary'=>'HIFIVE_PrimaryLogo.svg','brand'=>'HIFIVE_BrandLogo.svg','favicon'=>'HIFIVE_Favicon.svg'];
+ $path='assets/branding/'.($files[$kind]??$files['primary']);
+ return $path.'?v='.filemtime(ROOT.'/'.$path);
+}
