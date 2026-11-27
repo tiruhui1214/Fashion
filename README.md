@@ -226,6 +226,7 @@ JPG/PNG/WebP，单张最多 5 MB；拒绝上传 SVG 和可执行文件。建议�
 & 'C:\xampp\php\php.exe' tests/recommendation-service.php
 & 'C:\xampp\php\php.exe' tests/assistant-service.php
 & 'C:\xampp\php\php.exe' tests/schema-readiness.php
+& 'C:\xampp\php\php.exe' tests/new-in.php
 ```
 
 部署验收使用管理员与独立顾客窗口：测试价格/图片共享、正常和无效优惠、勾选结账、拒绝付款、重复提交、库存扣减和取消恢复、订单权限/状态、完成购买后评论及隐藏后的平均分。测试手机号/默认地址、停用账号及 variant、无匹配推荐、AI 失败回退、浮动面板发送/关闭/网络恢复和手机布局。
@@ -262,7 +263,7 @@ JPG/PNG/WebP，单张最多 5 MB；拒绝上传 SVG 和可执行文件。建议�
 
 配置文件 `.github/workflows/deploy-testing.yml` 监听 testing 分支的 push，或在 Actions 手动触发（仍只允许 testing）。本地保存、commit 尚未 push、其他分支的 push、未合并的 pull request 都不会更新网站。
 
-流程：组员提交功能分支 → 合并到 testing → Actions 检查 PHP 和五个规则测试 → SFTP 上传固定应用目录。按同一部署组串行处理，避免两个部署同时覆盖。每个文件先传临时文件再原子替换；不是全站事务，部署失败可能已有部分文件更新，需要修复后重新运行。
+流程：组员提交功能分支 → 合并到 testing → Actions 检查 PHP 和六个规则测试 → SFTP 上传固定应用目录。按同一部署组串行处理，避免两个部署同时覆盖。每个文件先传临时文件再原子替换；不是全站事务，部署失败可能已有部分文件更新，需要修复后重新运行。
 
 ### 一次性设置（仓库所有者／有权管理 Actions Secrets 的组员）
 
@@ -305,4 +306,29 @@ JPG/PNG/WebP，单张最多 5 MB；拒绝上传 SVG 和可执行文件。建议�
 
 ## 品牌 Logo 文件
 
-assets/branding/HIFIVE_PrimaryLogo.svg 用于导航、登录/注册和安装页；HIFIVE_BrandLogo.svg 用于页脚与后台；HIFIVE_Favicon.svg 用于浏览器标签。固定资源采用文件修改时间作版本参数，原始文件未改写。当前后台旧 logo 设置及上传图不会被删除，但不再覆盖固定品牌图。任意 SVG 上传仍不开放，safe_image 仅额外允许这三个固定路径。部署上传三个 SVG、index.php、setup.php、app/bootstrap.php、app/account.php、app/admin.php 和 assets/style.css。浏览器 favicon 可能需要无痕窗口或清缓存查看。三个 SVG 总计约 3 MB，包含内嵌 PNG；可另行优化格式，本次保留原素材。
+assets/branding/HIFIVE_PrimaryLogo.svg 用于导航、登录/注册和安装页；HIFIVE_BrandLogo.svg 用于页脚与后台；HIFIVE_Favicon.svg 用于浏览器标签。固定资源采用文件修改时间作版本参数，最新素材的覆盖画布白色矩形已移除，保留标志白色细节和渐变。当前后台旧 logo 设置及上传图不会被删除，但不再覆盖固定品牌图。任意 SVG 上传仍不开放，safe_image 仅额外允许这三个固定路径。部署上传三个 SVG、index.php、setup.php、app/bootstrap.php、app/account.php、app/admin.php 和 assets/style.css。浏览器 favicon 可能需要无痕窗口或清缓存查看。三个 SVG 总计约 3 MB，包含内嵌 PNG；可另行优化格式，本次保留原素材。
+
+
+### 最新透明 Logo（2026-11-27）
+
+BrandLogo/PrimaryLogo 的 SVG 尺寸均为 1000×1000，Favicon 为 512×512。来源文件有全画布白色矩形，项目版仅移除该元素，D:/ 原文件保留。导航/登录按正方形显示，无白底衬板；固定引用仍带文件版本参数。透明背景不代表删除标志本身的白色部分。更新三个 SVG、index.php、app/account.php、setup.php、assets/style.css 后刷新；favicon 需视浏览器缓存重新打开标签页。
+
+
+## New In 商品队列
+
+入口 index.php?page=newin：顶部 New In 和首页 View all new arrivals 进入独立新品页，普通分类筛选不变。旧的无筛选 catalog&sort=new 链接会跳转；其他 catalogue 筛选/排序仍保留。
+
+前八个已发布商品按创建时间/id 降序组成舞台队列，PREV/NEXT、左右方向键、横向拖动/滑动和点击后排商品可切换；默认每 3 秒自动循环切换，不显示播放控制。鼠标悬停轮播区、键盘聚焦商品区域或切换到其他标签页时暂停，离开后恢复；开启减少动态效果时默认不自动播放。右侧真实颜色/尺码/数量表单沿用 cart_add，服务器复核后进入购物车；售罄或无 variant 禁止购买。不显示虚假评论或先行增加购物车数量。下方网格仍展示全部已发布新品排序商品。
+
+当前使用已有商品主图；图片带背景时仍是矩形素材，不会自动变透明模特。下一批建议先制作三张 1200×1600、3:4 的全身单人透明 PNG/WebP：完整头脚、统一机位/灯光/留白、脚底约在画面 94%、人物高度约 88%，衣服与对应真实商品及颜色一致。通过 Colours, images & stock 更新各色主图，同一张也会出现在商品详情/网格；专用 queue 图片字段尚未新增。先试三张再批量制作。
+
+手机舞台和购买信息上下排列，保留正常纵向滚动；减少动态效果偏好取消切换动画。无 JavaScript 时首个商品可购买，其余可从下方网格进入详情。空目录提供普通空状态。
+
+本次更新文件：index.php、app/home.php、app/seed.php、app/new-in.php、app/new-in-data.php、assets/new-in.css、assets/new-in.js；测试 tests/new-in.php。没有数据库 migration，不执行 setup。测试命令：`php tests/new-in.php`。上传到现有站点，保留配置/安装锁/uploads；或提交到 testing 由已启用的 Actions 部署。
+
+
+### 登录入口与新品鼠标效果
+
+默认 Customer Login；Admin login 按钮进入独立管理员登录页（index.php?page=adminlogin）。服务器按入口验证账号角色，管理员成功登录进入后台。访客可继续浏览商品；注册只创建顾客，姓名、唯一邮箱及两次相同的 8–72 位密码为必填。不新增邮箱验证或邮件服务。
+
+New In 每 3 秒循环；鼠标进入左侧轮播区域暂停，移出恢复。键盘操作、后台标签页及减少动态效果仍受到保护。桌面模特区使用16px 无文字酒红细圆环，按钮保留普通光标，手机不启用。

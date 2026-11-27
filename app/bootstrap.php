@@ -19,7 +19,7 @@ function all(string $sql,array $params=[]): array { return query($sql,$params)->
 function one(string $sql,array $params=[]): ?array { return query($sql,$params)->fetch()?:null; }
 function user(): ?array { return empty($_SESSION['uid'])?null:one('SELECT id,name,email,phone,role FROM users WHERE id=? AND active=1',[$_SESSION['uid']]); }
 function login_required(): array { $u=user(); if(!$u) {flash('Please sign in to continue.','info');go('login');} return $u; }
-function admin_required(): array { $u=login_required(); if($u['role']!=='admin') {http_response_code(403);exit('Access denied. Administrator access is required.');} return $u; }
+function admin_required(): array { $u=user(); if(!$u) {flash('Please sign in as an administrator.','info');go('adminlogin');} if($u['role']!=='admin') {http_response_code(403);exit('Access denied. Administrator access is required.');} return $u; }
 function money($value): string { return 'RM '.number_format((float)$value,2); }
 function text_input(string $name,int $max=255): string { $v=trim((string)($_POST[$name]??'')); if($v===''||mb_strlen($v)>$max) throw new RuntimeException(ucwords(str_replace('_',' ',$name))." is required (maximum $max characters)."); return $v; }
 function integer_input(string $name,int $min=0,int $max=100000): int { $v=filter_var($_POST[$name]??null,FILTER_VALIDATE_INT); if($v===false||$v===null||$v<$min||$v>$max)throw new RuntimeException("Enter a valid $name between $min and $max."); return $v; }

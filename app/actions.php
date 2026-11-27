@@ -9,11 +9,12 @@ try {
    $name=text_input('name',100);if(strlen($password)<8||strlen($password)>72)throw new RuntimeException('Use a password between 8 and 72 characters.');
    if($password!==($_POST['confirm_password']??''))throw new RuntimeException('Passwords do not match.');
    if(one('SELECT id FROM users WHERE email=?',[$email]))throw new RuntimeException('This email is already registered. Please sign in.');
-   query('INSERT INTO users(name,email,password_hash) VALUES(?,?,?)',[$name,$email,password_hash($password,PASSWORD_DEFAULT)]);$u=['id'=>db()->lastInsertId()];
+   query("INSERT INTO users(name,email,password_hash,role) VALUES(?,?,?,'customer')",[$name,$email,password_hash($password,PASSWORD_DEFAULT)]);$u=['id'=>db()->lastInsertId()];
   }else{
-   $u=one('SELECT * FROM users WHERE email=?',[$email]);if(!$u||!$u['active']||!password_verify($password,$u['password_hash']))throw new RuntimeException('Email or password is incorrect.');
+   $loginRole=($_GET['page']??'login')==='adminlogin'?'admin':'customer';
+   $u=one('SELECT * FROM users WHERE email=?',[$email]);if(!$u||!$u['active']||!password_verify($password,$u['password_hash'])||$u['role']!==$loginRole)throw new RuntimeException('Email or password is incorrect.');
   }
-  session_regenerate_id(true);$_SESSION['uid']=(int)$u['id'];$_SESSION['csrf']=bin2hex(random_bytes(32));unset($_SESSION['checkout_key'],$_SESSION['quote_secret'],$_SESSION['promo_code'],$_SESSION['assistant'],$_SESSION['cart_recommendations']);flash('Welcome to HIFIVE.');go('account');
+  session_regenerate_id(true);$_SESSION['uid']=(int)$u['id'];$_SESSION['csrf']=bin2hex(random_bytes(32));unset($_SESSION['checkout_key'],$_SESSION['quote_secret'],$_SESSION['promo_code'],$_SESSION['assistant'],$_SESSION['cart_recommendations']);flash('Welcome to HIFIVE.');go($action==='login'&&$u['role']==='admin'?'admin':'account');
  }
  if($action==='logout'){$_SESSION=[];session_regenerate_id(true);flash('You have signed out.');go();}
  $u=login_required();$uid=(int)$u['id'];
