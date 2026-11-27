@@ -1,9 +1,9 @@
 <?php
-// Copy to config.local.php if your XAMPP database settings differ.
+// LOCAL DEVELOPMENT ONLY. Copy to config.local.php; never commit real credentials.
 return [
     'host' => '127.0.0.1',
     'port' => 3306,
-    'database' => 'forme',
+    'database' => 'hifive',
     'username' => 'root',
-    'password' => '', // XAMPP's usual LOCAL development default. Never deploy this publicly.
+    'password' => '',
 ];

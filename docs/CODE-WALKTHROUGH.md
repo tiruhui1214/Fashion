@@ -10,18 +10,18 @@
 
 Use the browser's Network panel to follow a POST → redirect → GET. Refreshing a result page should not repeat a form submission.
 
-## Suggested module mapping — reconcile with the tutor-approved names
+## Six module mapping
 
-| Module | Relevant files/tables | CRUD |
+| Module | Main files/tables | Main operations and special features |
 |---|---|---|
-| User/account | account.php, actions.php; users, addresses | register/create customer, retrieve, edit profile/customer, delete eligible customer/address |
-| Homepage content | admin.php, admin-actions.php, home.php, admin-catalog-banners.php, catalog-banners.php; banners, settings | add, list, edit, delete banner |
-| Product/category | catalog.php, admin files; categories, products | add, list/detail, edit, delete |
-| Variant/inventory | admin files, catalog.php; variants, product_images | add, list, edit stock/colour/image, delete |
-| Shopping bag | shop.php, actions.php; cart_items | add, retrieve, update quantity, remove |
-| Order | shop.php, actions.php, admin files; orders, order_items | create via checkout, view, progress/cancel, delete cancelled demo order |
+| Product | catalog.php, admin.php, admin-feature-actions.php; categories/products/variants/product_images | CRUD, search, same-variant filters, activation, per-variant low-stock alerts |
+| Promotion | admin-promotions.php, admin-promotions-actions.php, promotions.php; promotions/orders | CRUD/search, code validation, checkout discount and historical snapshot |
+| Customer | account.php, account-profile.php, admin-customers.php, feature-actions.php; users/addresses | Registration/profile, default saved addresses, admin search/history/deactivation |
+| Shopping cart | shop.php, shop-checkout.php, feature-actions.php; cart_items | Selection, totals, quantity/removal and selected-only checkout; complementary recommendations |
+| Order | admin-orders.php, feature-services.php, admin-feature-actions.php; orders/order_items/payments/order_status_history | Simulated payment, search/status, cancellation and once-only stock restoration |
+| Review and Rating | product-reviews.php, admin-reviews.php, feature-actions.php; reviews | Completed-purchase reviews, editing, moderation, visible-only average/count |
 
-Wishlist and reviews are related supporting functions. Shared UI, architecture and integration are team tasks. Candidate unique functions include banner preview, low-stock alerts, and cancellation with stock restoration; tutor approval, fair complexity and actual individual contribution must be checked.
+Authentication and content/brand management are shared support. The floating recommendation assistant and selected-cart complements are independent entry points; see [README — AI 配置](../README.md#ai). Actual individual contributions and tutor-approved module names must match the report. PHP files are under app/ unless otherwise noted.
 
 ## Explain these business rules in your own words
 
@@ -39,7 +39,7 @@ Wishlist and reviews are related supporting functions. Shared UI, architecture a
 
 ## A practical learning sequence
 
-1. Run the installer on your own computer. Locate the resulting tables in phpMyAdmin.
+1. Use a separate development database or the shared deployed site. Run the installer only for a fresh empty local database; never reinstall the populated shared store.
 2. Change one CSS colour and one heading, save and refresh.
 3. Trace product retrieval from the SQL query to the card HTML.
 4. Add a product and one variant through the admin UI; inspect both rows in phpMyAdmin.
@@ -52,3 +52,7 @@ The project is not a replacement for your individual understanding, original wor
 ## Catalogue header implementation
 
 `catalog-banners.php` builds an allowlist of department and existing category targets. The display-only editor stores five settings per target (image, mobile image, title, subtitle and text colour) in the existing settings table. All writes require administrator access and CSRF validation. A subcategory without an image override inherits the department image; reset deletes only that target's five keys. The front-end header has no anchor, button, click handler or destination URL.
+
+## Database versus brand
+
+HIFIVE is the storefront name. Database names and service credentials come from config.local.php and need not match the brand. An existing legacy brand_name value is displayed as HIFIVE; newly entered custom brand names remain supported. Existing SKU/order references are historical identifiers, not labels to rewrite.
