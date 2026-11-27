@@ -17,7 +17,7 @@ function assistant_send_message(string $message,string $requestId='',?callable $
     $result=($recommender??'recommendations')($history['preferences'],$message,$history['messages']);
     $history['result']=$result;$history['preferences']=$result['preferences'];
     $names=array_column($result['items'],'name');
-    $history['messages'][]=['role'=>'assistant','text'=>$names?'Suggested: '.implode(', ',$names).'. Explore the pieces below.':'No matching products found. Try changing your colour, size, style or budget.'];
+    $history['messages'][]=['role'=>'assistant','text'=>$names?'Suggested: '.implode(', ',$names).'. Explore the pieces below.':($result['notice']?:'No matching products found. Try changing your colour, size, style or budget.')];
     $history['messages']=array_slice($history['messages'],-12);
     $_SESSION['assistant']=$history;
     if($requestId!=='')$_SESSION['assistant_request_ids']=array_slice(array_merge($_SESSION['assistant_request_ids']??[],[$requestId]),-20);

@@ -33,7 +33,7 @@ jobs:
           for file in index.php setup.php config.example.php ai.example.php; do
             php -l "$file"
           done
-          for test in promotions features recommendation-service assistant-service schema-readiness new-in; do
+          for test in promotions features recommendation-service assistant-service schema-readiness new-in recommendation-context; do
             php "tests/$test.php"
           done
       - name: Install SFTP client library

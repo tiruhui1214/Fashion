@@ -1,4 +1,4 @@
-<?php if(!defined('ROOT')){http_response_code(404);exit;} ?>
+<?php if(!defined('ROOT')){http_response_code(404);exit;} if(!$currentUser||in_array($page??'', ['login','adminlogin','register'],true))return; ?>
 <div class="fashion-chat" data-fashion-chat data-endpoint="<?=e(url('assistant_api'))?>">
 <button type="button" class="chat-launcher" aria-label="Open style assistant" aria-expanded="false" aria-controls="fashion-chat-panel" data-chat-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-8 8H6l-4 3v-7a8 8 0 1 1 18-4Z"/><path d="m9 8 1 2 2 1-2 1-1 2-1-2-2-1 2-1Z"/></svg><span>Style assistant</span></button>
 <section class="chat-panel" id="fashion-chat-panel" role="dialog" aria-modal="false" aria-labelledby="fashion-chat-title" hidden>

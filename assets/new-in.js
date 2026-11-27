@@ -27,7 +27,16 @@
   const show = (next, announce = true) => {
     if (!count) return;
     const previous = index;
-    index = (next + count) % count;
+    const direction = next < index ? -1 : 1;
+    index = ((next % count) + count) % count;
+    if (direction < 0 && index !== previous && !reduced.matches) {
+      // PREV enters from the right at full size, rather than growing from the hidden left queue.
+      const incoming = figures[index];
+      incoming.style.transition = 'none';
+      incoming.dataset.position = '-1';
+      void incoming.offsetWidth;
+      incoming.style.transition = '';
+    }
     figures.forEach((figure, i) => {
       const offset = (i - index + count) % count;
       // The just-departed main image exits to the right while queued images advance.
@@ -44,7 +53,7 @@
       panel.inert = !active;
       if (active && announce && !reduced.matches && panel.animate) {
         panel.getAnimations().forEach(animation => animation.cancel());
-        panel.animate([{ opacity: .25, transform: 'translateX(18px)' }, { opacity: 1, transform: 'translateX(0)' }], { duration: 420, easing: 'ease-out' });
+        panel.animate([{ opacity: .25, transform: `translateX(${direction < 0 ? 18 : -18}px)` }, { opacity: 1, transform: 'translateX(0)' }], { duration: 420, easing: 'ease-out' });
       }
     });
     counter.textContent = `${String(index + 1).padStart(2, '0')} / ${String(count).padStart(2, '0')}`;

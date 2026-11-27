@@ -167,3 +167,56 @@ if (selectionForm) {
   });
   checks.forEach(check => check.addEventListener('change', () => selectionForm.requestSubmit()));
 }
+
+// Saving a favourite updates the current view; POST remains available without JS.
+(() => {
+  const pendingProducts = new Set();
+  let toastTimer;
+  const notify = (message, error = false) => {
+    document.querySelector('[data-wishlist-notice]')?.remove();
+    clearTimeout(toastTimer);
+    const toast = document.createElement('div');
+    toast.className = `notice toast ${error ? 'error' : 'success'}`;
+    toast.dataset.wishlistNotice = '';
+    toast.setAttribute('role', error ? 'alert' : 'status');
+    const text = document.createElement('span'); text.textContent = message;
+    const close = document.createElement('button'); close.type = 'button';
+    close.textContent = '×'; close.setAttribute('aria-label', 'Dismiss notification');
+    close.addEventListener('click', () => toast.remove());
+    toast.append(text, close); document.body.append(toast);
+    toastTimer = setTimeout(() => toast.remove(), error ? 7000 : 4000);
+  };
+  document.addEventListener('submit', async event => {
+    const form = event.target;
+    if (!(form instanceof HTMLFormElement) || form.elements.namedItem('action')?.value !== 'wishlist') return;
+    event.preventDefault();
+    const id = form.elements.namedItem('id')?.value;
+    if (!id || pendingProducts.has(id)) return;
+    pendingProducts.add(id);
+    const button = event.submitter || form.querySelector('button');
+    if (button) button.disabled = true;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    try {
+      const response = await fetch(form.getAttribute('action') || window.location.href, {
+        method: 'POST', credentials: 'same-origin', headers: { Accept: 'application/json' },
+        body: new FormData(form), signal: controller.signal
+      });
+      if (!response.headers.get('content-type')?.includes('application/json')) throw new Error('Please sign in again and retry saving this item.');
+      const data = await response.json();
+      if (!response.ok || !data.ok) throw new Error(data.message || 'Could not update your wishlist. Please try again.');
+      document.querySelectorAll('form').forEach(other => {
+        if (other.elements.namedItem('action')?.value !== 'wishlist' || other.elements.namedItem('id')?.value !== id) return;
+        const control = other.querySelector('button');
+        control?.classList.toggle('is-saved', data.saved);
+        control?.setAttribute('aria-pressed', String(data.saved));
+      });
+      notify(data.message);
+    } catch (error) {
+      notify(error.name === 'AbortError' ? 'The request timed out. Check your wishlist before trying again.' : error.message, true);
+    } finally {
+      clearTimeout(timeout); pendingProducts.delete(id);
+      if (button) button.disabled = false;
+    }
+  });
+})();

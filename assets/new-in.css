@@ -90,3 +90,8 @@
  .queue-stage.has-drag-cursor .queue-drag-cursor { display:flex; }
  .queue-stage .queue-controls button { cursor:pointer; }
 }
+
+/* Controls sit directly on the beige stage; only the labels have a fading backing. */
+.queue-controls { padding:0; background:transparent; border:0; backdrop-filter:none; -webkit-backdrop-filter:none; }
+.queue-controls button { color:#34312c; padding:8px 14px; background:linear-gradient(90deg,rgba(242,240,233,.98),rgba(242,240,233,.75) 60%,rgba(242,240,233,0)); text-shadow:0 1px rgba(255,255,255,.5); }
+.queue-controls [data-queue-next] { background:linear-gradient(270deg,rgba(242,240,233,.98),rgba(242,240,233,.75) 60%,rgba(242,240,233,0)); }

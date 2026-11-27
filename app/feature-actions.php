@@ -4,7 +4,7 @@ if($action==='profile'){
     $name=text_input('name',100);$email=strtolower(text_input('email',190));$phone=validated_phone(scalar_value($_POST,'phone'),true);
     if(!filter_var($email,FILTER_VALIDATE_EMAIL))throw new RuntimeException('Enter a valid email address.');
     if(one('SELECT id FROM users WHERE email=? AND id<>?',[$email,$uid]))throw new RuntimeException('Email is already in use.');
-    query('UPDATE users SET name=?,email=?,phone=? WHERE id=?',[$name,$email,$phone,$uid]);flash('Profile updated.');go('account');
+    query('UPDATE users SET name=?,email=?,phone=? WHERE id=?',[$name,$email,$phone,$uid]);flash('Profile updated.');go('account',['tab'=>'details']);
 }
 if($action==='address_save'){
     $id=integer_input('id',0);$a=address_values($_POST);
@@ -15,7 +15,7 @@ if($action==='address_save'){
     $params=array_values($a);
     if($id)query('UPDATE addresses SET label=?,recipient=?,phone=?,line1=?,line2=?,city=?,state=?,postcode=?,country=?,is_default=? WHERE id=? AND user_id=?',array_merge($params,[$id,$uid]));
     else query('INSERT INTO addresses(label,recipient,phone,line1,line2,city,state,postcode,country,is_default,user_id) VALUES(?,?,?,?,?,?,?,?,?,?,?)',array_merge($params,[$uid]));
-    db()->commit();flash('Address saved.');go('account');
+    db()->commit();flash('Address saved.');go('account',['tab'=>'addresses']);
 }
 if($action==='address_delete'){
     $id=integer_input('id',1);db()->beginTransaction();one('SELECT id FROM users WHERE id=? FOR UPDATE',[$uid]);
@@ -23,7 +23,7 @@ if($action==='address_delete'){
     if(!one('SELECT id FROM addresses WHERE user_id=? AND is_default=1',[$uid])){
         $first=one('SELECT id FROM addresses WHERE user_id=? ORDER BY id LIMIT 1',[$uid]);if($first)query('UPDATE addresses SET is_default=1 WHERE id=?',[$first['id']]);
     }
-    db()->commit();flash('Address removed.');go('account');
+    db()->commit();flash('Address removed.');go('account',['tab'=>'addresses']);
 }
 if($action==='cart_select'){
     $ids=$_POST['selected']??[];if(!is_array($ids))throw new RuntimeException('Invalid cart selection.');
